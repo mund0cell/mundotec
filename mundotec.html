@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mundotec - Calculadora CLP a Bs</title>
+<style>
+  body {
+    margin: 0; background: #F9F9F9; font-family: Arial, sans-serif;
+    display: flex; justify-content: center; align-items: center; height: 100vh;
+  }
+  #floatingApp {
+    position: fixed;
+    top: 20px; right: 20px;
+    width: 320px; max-width: 90vw;
+    background: #fff;
+    border: 3px solid #007A33; /* verde bandera boliviana */
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    padding: 16px 20px;
+    z-index: 9999;
+  }
+  #header {
+    color: #D52B1E; /* rojo bandera */
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  label {
+    display: block; margin-bottom: 6px; font-weight: 600; color: #007A33;
+  }
+  input[type=number] {
+    width: 100%; padding: 8px; font-size: 16px; border-radius: 6px;
+    border: 2px solid #007A33; outline: none;
+  }
+  input[type=number]:focus {
+    border-color: #D52B1E;
+  }
+  #result {
+    margin-top: 14px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #007A33;
+    text-align: center;
+  }
+  #buttons {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+  }
+  button {
+    background: #D52B1E;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+    margin: 0 4px;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #a02119;
+  }
+  #closeBtn {
+    position: absolute;
+    top: 6px; right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    color: #D52B1E;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div id="floatingApp" role="dialog" aria-label="Calculadora de cambio Mundotec">
+    <button id="closeBtn" aria-label="Cerrar">×</button>
+    <div id="header">Envía dinero seguro y confiable con Mundotec</div>
+    <label for="clpInput">Pesos chilenos (CLP):</label>
+    <input type="number" id="clpInput" min="0" step="1" placeholder="Ingresa monto en CLP" />
+    <div id="result">Bs: 0</div>
+    <div id="buttons">
+      <button id="copyBtn">Copiar resultado</button>
+      <button id="shareBtn">Compartir por WhatsApp</button>
+    </div>
+  </div>
+
+<script>
+  const tasa = 14;
+  const clpInput = document.getElementById('clpInput');
+  const resultDiv = document.getElementById('result');
+  const copyBtn = document.getElementById('copyBtn');
+  const shareBtn = document.getElementById('shareBtn');
+  const closeBtn = document.getElementById('closeBtn');
+  const floatingApp = document.getElementById('floatingApp');
+
+  function actualizarResultado() {
+    const clp = Number(clpInput.value);
+    if (!clp || clp <= 0) {
+      resultDiv.textContent = 'Bs: 0';
+      return;
+    }
+    const bs = (clp * tasa).toFixed(2);
+    resultDiv.textContent = `Bs: ${bs}`;
+  }
+
+  clpInput.addEventListener('input', actualizarResultado);
+
+  copyBtn.addEventListener('click', () => {
+    const text = resultDiv.textContent;
+    if(text !== 'Bs: 0') {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Resultado copiado: ' + text);
+      });
+    } else {
+      alert('No hay resultado para copiar.');
+    }
+  });
+
+  shareBtn.addEventListener('click', () => {
+    const clp = Number(clpInput.value);
+    if (!clp || clp <= 0) {
+      alert('Ingresa un monto válido para compartir');
+      return;
+    }
+    const bs = (clp * tasa).toFixed(2);
+    const mensaje = `Calculadora Mundotec:\n${clp} CLP = ${bs} Bs\nEnvía dinero seguro y confiable con Mundotec.`;
+    const urlWhatsApp = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+    window.open(urlWhatsApp, '_blank');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    floatingApp.style.display = 'none';
+  });
+
+  actualizarResultado();
+</script>
+</body>
+</html>
